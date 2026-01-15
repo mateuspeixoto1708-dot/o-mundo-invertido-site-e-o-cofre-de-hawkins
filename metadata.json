@@ -1,0 +1,7 @@
+{
+  "name": "Hawkins Vault",
+  "description": "An immersive, 1980s retro-inspired experience based on Stranger Things. Explore the Upside Down, decode messages with Joyce's lights, and interact with the Hawkins Lab archives using Gemini AI.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
