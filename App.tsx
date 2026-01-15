@@ -10,6 +10,7 @@ import Soundtrack from './components/Soundtrack';
 import Characters from './components/Characters';
 import CharacterCreator from './components/CharacterCreator';
 import HawkinsMap from './components/HawkinsMap';
+import SecretArchives from './components/SecretArchives';
 import { AppMode, Page } from './types';
 import { generateTheory } from './services/geminiService';
 
@@ -17,6 +18,7 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<AppMode>('NORMAL');
   const [currentPage, setCurrentPage] = useState<Page>('HOME');
   const [dailyTheory, setDailyTheory] = useState<string>('Loading top secret theories...');
+  const [secretsUnlocked, setSecretsUnlocked] = useState(false);
 
   useEffect(() => {
     const fetchTheory = async () => {
@@ -37,7 +39,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (currentPage) {
       case 'QUIZ':
-        return <Quiz />;
+        return <Quiz onUnlockSecret={() => setSecretsUnlocked(true)} />;
       case 'EPISODES':
         return <Episodes />;
       case 'MUSIC':
@@ -48,6 +50,8 @@ const App: React.FC = () => {
         return <CharacterCreator />;
       case 'MAP':
         return <HawkinsMap />;
+      case 'SECRET_ARCHIVES':
+        return <SecretArchives />;
       default:
         return (
           <div className="space-y-32">
@@ -108,6 +112,15 @@ const App: React.FC = () => {
             <button onClick={() => setCurrentPage('QUIZ')} className={`text-xs font-mono uppercase tracking-widest whitespace-nowrap ${currentPage === 'QUIZ' ? 'text-red-600 font-bold' : 'text-zinc-500 hover:text-white'}`}>Quiz (50 Qs)</button>
             <button onClick={() => setCurrentPage('EPISODES')} className={`text-xs font-mono uppercase tracking-widest whitespace-nowrap ${currentPage === 'EPISODES' ? 'text-red-600 font-bold' : 'text-zinc-500 hover:text-white'}`}>Episodes</button>
             <button onClick={() => setCurrentPage('MUSIC')} className={`text-xs font-mono uppercase tracking-widest whitespace-nowrap ${currentPage === 'MUSIC' ? 'text-red-600 font-bold' : 'text-zinc-500 hover:text-white'}`}>Music</button>
+            
+            {secretsUnlocked && (
+              <button 
+                onClick={() => setCurrentPage('SECRET_ARCHIVES')} 
+                className={`text-xs font-mono uppercase tracking-widest whitespace-nowrap animate-pulse ${currentPage === 'SECRET_ARCHIVES' ? 'text-red-500 font-bold' : 'text-red-700 hover:text-red-500'}`}
+              >
+                ⚠ SECRET ARCHIVES
+              </button>
+            )}
           </div>
 
           <button 
@@ -127,7 +140,8 @@ const App: React.FC = () => {
            <div className="py-8 mb-12 border-b border-zinc-900/30 flex justify-center">
               <h1 className="benguiat-style text-4xl md:text-5xl tracking-tighter text-center">
                 {currentPage === 'CREATE_CHARACTER' ? 'Subject Profiler' : 
-                 currentPage === 'MAP' ? 'Hawkins Radar' : currentPage}
+                 currentPage === 'MAP' ? 'Hawkins Radar' : 
+                 currentPage === 'SECRET_ARCHIVES' ? 'RESTRICTED ACCESS' : currentPage}
               </h1>
            </div>
         )}

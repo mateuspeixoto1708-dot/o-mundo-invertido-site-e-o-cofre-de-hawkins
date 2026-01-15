@@ -16,7 +16,7 @@ export interface ParticleProps {
 
 export type AppMode = 'NORMAL' | 'UPSIDE_DOWN';
 
-export type Page = 'HOME' | 'QUIZ' | 'EPISODES' | 'MUSIC' | 'CHARACTERS' | 'CREATE_CHARACTER' | 'MAP';
+export type Page = 'HOME' | 'QUIZ' | 'EPISODES' | 'MUSIC' | 'CHARACTERS' | 'CREATE_CHARACTER' | 'MAP' | 'SECRET_ARCHIVES';
 
 export interface QuizQuestion {
   id: number;

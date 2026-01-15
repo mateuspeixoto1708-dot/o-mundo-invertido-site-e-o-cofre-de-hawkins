@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { QuizQuestion } from '../types';
 
 const QUESTIONS: QuizQuestion[] = [
@@ -13,7 +13,6 @@ const QUESTIONS: QuizQuestion[] = [
   { id: 8, question: "Qual é o nome da irmã de Lucas?", options: ["Erica", "Tina", "Holly", "Stacy"], answer: 0 },
   { id: 9, question: "Qual personagem trabalha na sorveteria Scoops Ahoy?", options: ["Nancy", "Steve", "Jonathan", "Billy"], answer: 1 },
   { id: 10, question: "Quem é o pai biológico da Eleven?", options: ["Jim Hopper", "Dr. Brenner", "Lonnie Byers", "Bob Newby"], answer: 1 },
-  // ... Adding more compact questions to reach a substantial number without bloating code excessively
   { id: 11, question: "Qual música salvou Max do Vecna?", options: ["Should I Stay or Should I Go", "Running Up That Hill", "Master of Puppets", "Dream a Little Dream of Me"], answer: 1 },
   { id: 12, question: "Qual é o apelido do Dr. Brenner?", options: ["Father", "Papa", "Dad", "Chief"], answer: 1 },
   { id: 13, question: "Como Eleven chama o Mike?", options: ["Mickey", "Mike", "Bf", "Brother"], answer: 1 },
@@ -56,7 +55,11 @@ const QUESTIONS: QuizQuestion[] = [
   { id: 50, question: "Quantos episódios tem a 1ª temporada?", options: ["8", "9", "10", "12"], answer: 0 },
 ];
 
-const Quiz: React.FC = () => {
+interface QuizProps {
+  onUnlockSecret?: () => void;
+}
+
+const Quiz: React.FC<QuizProps> = ({ onUnlockSecret }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
@@ -65,8 +68,10 @@ const Quiz: React.FC = () => {
   const handleAnswer = (idx: number) => {
     setSelected(idx);
     setTimeout(() => {
+      let newScore = score;
       if (idx === QUESTIONS[currentIdx].answer) {
-        setScore(s => s + 1);
+        newScore = score + 1;
+        setScore(newScore);
       }
       
       if (currentIdx + 1 < QUESTIONS.length) {
@@ -78,6 +83,12 @@ const Quiz: React.FC = () => {
     }, 600);
   };
 
+  useEffect(() => {
+    if (showResult && score >= 30 && onUnlockSecret) {
+      onUnlockSecret();
+    }
+  }, [showResult, score, onUnlockSecret]);
+
   if (showResult) {
     return (
       <div className="max-w-2xl mx-auto p-12 bg-zinc-900 border-4 border-red-700 rounded-lg text-center shadow-[0_0_30px_rgba(185,28,28,0.5)]">
@@ -85,11 +96,20 @@ const Quiz: React.FC = () => {
         <div className="text-6xl font-mono text-white mb-8">{score} / {QUESTIONS.length}</div>
         <p className="text-zinc-400 mb-8 font-serif italic text-lg">
           {score > 45 ? "Você é um verdadeiro habitante de Hawkins! Eleven estaria orgulhosa." : 
-           score > 30 ? "Você sabe bastante, mas o Mundo Invertido ainda tem segredos para você." : 
+           score > 30 ? "Excelente conhecimento! Você desbloqueou os Arquivos Secretos do Laboratório." : 
            "Talvez você precise maratonar a série novamente... se tiver coragem."}
         </p>
+        
+        {score >= 30 && (
+          <div className="mb-8 p-4 bg-red-900/20 border border-red-600 rounded animate-pulse">
+            <p className="text-red-500 font-mono text-sm uppercase tracking-widest">
+              ⚠ ACCESS GRANTED: SECRET ARCHIVES UNLOCKED ⚠
+            </p>
+          </div>
+        )}
+
         <button 
-          onClick={() => { setCurrentIdx(0); setScore(0); setShowResult(false); }}
+          onClick={() => { setCurrentIdx(0); setScore(0); setShowResult(false); setSelected(null); }}
           className="bg-red-700 hover:bg-red-600 text-white px-8 py-3 rounded uppercase tracking-widest font-bold transition-all"
         >
           Reiniciar Desafio
